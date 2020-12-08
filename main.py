@@ -31,6 +31,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from algorithms import *
+
 import time
 
 class Application(tk.Frame):
