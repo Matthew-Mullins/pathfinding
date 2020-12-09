@@ -205,7 +205,7 @@ class Application(tk.Frame):
             algo = DFS(self.master, self.grid)
         else:
             algo = BFS(self.master, self.grid)
-        print(algo)
+        algo.run(self.start_tile.position, self.end_tile.position)
 
     def update(self):
         self.master.update()

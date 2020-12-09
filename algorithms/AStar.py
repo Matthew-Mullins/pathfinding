@@ -7,5 +7,5 @@ class AStar(Algorithm):
     def heuristic(self):
         pass
 
-    def run(self, start: tuple, goal: tuple, h: callable):
+    def run(self, start: tuple, goal: tuple):
         pass

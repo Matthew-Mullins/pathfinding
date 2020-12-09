@@ -5,6 +5,10 @@ class Algorithm:
         self.master = master
         self.grid = grid
 
+    # Override this for each
+    def run(self):
+        pass
+
     def reconstruct_path(self, came_from: dict, current):
         total_path = [current]
         while current in came_from.keys():
