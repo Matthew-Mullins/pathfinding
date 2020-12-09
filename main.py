@@ -35,6 +35,48 @@ from algorithms import *
 
 import time
 
+class Tile:
+    def __init__(self, frame, position):
+        self.frame = frame
+        self.position = position
+        self.blocked = False
+
+    def reset(self):
+        self.set_block(False)
+        self.set_start(False)
+        self.set_end(False)
+
+    def set_block(self, block=True):
+        self.blocked = block
+        if block:
+            self.color = 'black'
+        else:
+            self.color = 'white'
+        self.update_color()
+
+    def set_start(self, start=True):
+        if self.blocked:
+            self.set_block(False)
+        self.is_start = start
+        if start:
+            self.color = 'green'
+        else:
+            self.color = 'white'
+        self.update_color()
+
+    def set_end(self, end=True):
+        if self.blocked:
+            self.set_block(False)
+        self.is_end = end
+        if end:
+            self.color = 'red'
+        else:
+            self.color = 'white'
+        self.update_color()
+
+    def update_color(self):
+        self.frame.configure(bg=self.color)
+
 class Application(tk.Frame):
     GRID_W = 50
     GRID_H = 50
@@ -44,11 +86,16 @@ class Application(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master = master
+        self.grid = []
         self.reset()
         self.initialize()
 
     def reset(self):
+        self.reset_body()
         self.running = False
+        self.walls = set()
+        self.start_tile = None
+        self.end_tile = None
 
     def initialize(self):
         self.create_header()
@@ -95,39 +142,58 @@ class Application(tk.Frame):
         entry_delay = tk.Entry(frame_header, justify=tk.RIGHT, textvariable=self.delay_var, width=5)
         entry_delay.grid(row=2, column=3, sticky=tk.W)
 
+        button = tk.Button(frame_header, bg='green', text='Start', command=self.start)
+        button.grid(row=3, column=2, columnspan=2, sticky=tk.NSEW)
+
+        button = tk.Button(frame_header, bg='red', text='Reset', command=self.reset)
+        button.grid(row=4, column=2, columnspan=2, sticky=tk.NSEW)
+
     def create_body(self):
-        self.grid = []
         frame_body = tk.Frame(self.master, bd=2, relief=tk.RAISED)
         frame_body.pack(side=tk.TOP, expand=tk.FALSE, fill=tk.BOTH)
         for y in range(Application.GRID_H):
             row = []
             for x in range(Application.GRID_W):
-                frame = tk.Frame(frame_body, bd=2, height=Application.TILE_H, relief=tk.SUNKEN, width=Application.TILE_W)
+                frame = tk.Frame(frame_body, bd=2, bg='white', height=Application.TILE_H, relief=tk.SUNKEN, width=Application.TILE_W)
                 frame.grid(column=x, row=y, sticky=tk.NSEW)
-                frame.bind('<Button-1>', func=lambda e: self.set_start(e))
-                frame.bind('<Button-3>', func=lambda e: self.set_end(e))
+                tile = Tile(frame, (x, y))
 
-    def set_start(self, e):
-        print(e.widget)
-
-    def set_end(self, e):
-        print(e.widget)
+                frame.bind('<Button-1>', func=lambda e, tile=tile: self.set_start(tile))
+                frame.bind('<Button-3>', func=lambda e, tile=tile: self.set_end(tile))
+                row.append(tile)
+            self.grid.append(row)
 
     def reset_body(self):
-        pass
+        if self.grid.count == 0:
+            return
+        for col in self.grid:
+            for row in col:
+                row.reset()
 
-    def update_speed(self):
-        pass
+    def set_start(self, tile):
+        if self.start_tile:
+            self.start_tile.reset()
+        self.start_tile = tile
+        tile.set_start()
+
+    def set_end(self, tile):
+        if self.end_tile:
+            self.end_tile.reset()
+        self.end_tile = tile
+        tile.set_end()
 
     def start(self):
-        pass
+        print(self.algorithm_var.get())
+
+    def update(self):
+        self.master.update()
+        self.master.update_idletasks()
 
     def run(self):
         while True:
             if self.running:
                 pass
-            self.master.update()
-            self.master.update_idletasks()
+            self.update()
 
 def main():
     root = tk.Tk()
