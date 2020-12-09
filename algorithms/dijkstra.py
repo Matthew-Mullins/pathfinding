@@ -1,4 +1,4 @@
-from Algorithm import Algorithm
+from algorithms import Algorithm
 
 class Dijkstra(Algorithm):
     def __init__(self, master, grid):

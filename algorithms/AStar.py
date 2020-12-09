@@ -1,4 +1,4 @@
-from algorithm import Algorithm
+from algorithms import Algorithm
 
 class AStar(Algorithm):
     def __init__(self, master, grid):

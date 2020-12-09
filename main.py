@@ -33,6 +33,7 @@ from tkinter import ttk
 
 from algorithms import *
 
+import keyboard
 import time
 
 class Tile:
@@ -123,15 +124,15 @@ class Application(tk.Frame):
         label = tk.Label(frame_header, anchor=tk.W, text='Pathfinding Algorithm:')
         label.grid(row=1, column=2, sticky=tk.W)
 
-        algorithms = [
+        self.algorithms = [
             'A*',
             'Dijkstra\'s',
             'Depth-First Search',
             'Breadth-First Search'
         ]
         self.algorithm_var = tk.StringVar()
-        self.algorithm_var.set(algorithms[0])
-        combobox = ttk.Combobox(frame_header, justify=tk.LEFT, textvariable=self.algorithm_var, values=algorithms, width=20)
+        self.algorithm_var.set(self.algorithms[0])
+        combobox = ttk.Combobox(frame_header, justify=tk.LEFT, textvariable=self.algorithm_var, values=self.algorithms, width=20)
         combobox.grid(row=1, column=3, sticky=tk.W)
 
         label = tk.Label(frame_header, anchor=tk.W, text='Pathfinding Delay (ms):')
@@ -172,7 +173,14 @@ class Application(tk.Frame):
                 row.reset()
 
     def toggle_wall(self, tile):
-        pass
+        if tile == self.start_tile or tile == self.end_tile:
+            return
+        if keyboard.is_pressed('z'):
+            if not tile.blocked:
+                tile.set_block()
+        if keyboard.is_pressed('x'):
+            if tile.blocked:
+                tile.set_block(False)
 
     def set_start(self, tile):
         if self.start_tile:
@@ -187,7 +195,17 @@ class Application(tk.Frame):
         tile.set_end()
 
     def start(self):
-        print(self.algorithm_var.get())
+        algo_selected = self.algorithm_var.get()
+        algo = None
+        if algo_selected == self.algorithms[0]:
+            algo = AStar(self.master, self.grid)
+        elif algo_selected == self.algorithms[1]:
+            algo = Dijkstra(self.master, self.grid)
+        elif algo_selected == self.algorithms[2]:
+            algo = DFS(self.master, self.grid)
+        else:
+            algo = BFS(self.master, self.grid)
+        print(algo)
 
     def update(self):
         self.master.update()
