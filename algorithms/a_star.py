@@ -1,8 +1,8 @@
-from Algorithm import Algorithm
+from algorithm import Algorithm
 
 class AStar(Algorithm):
-    def __init__(self):
-        Algorithm.__init__(self)
+    def __init__(self, master, grid):
+        Algorithm.__init__(self, master, grid)
 
     def heuristic(self):
         pass

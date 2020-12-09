@@ -160,6 +160,7 @@ class Application(tk.Frame):
 
                 frame.bind('<Button-1>', func=lambda e, tile=tile: self.set_start(tile))
                 frame.bind('<Button-3>', func=lambda e, tile=tile: self.set_end(tile))
+                frame.bind('<Enter>', func=lambda e, tile=tile: self.toggle_wall(tile))
                 row.append(tile)
             self.grid.append(row)
 
@@ -169,6 +170,9 @@ class Application(tk.Frame):
         for col in self.grid:
             for row in col:
                 row.reset()
+
+    def toggle_wall(self, tile):
+        pass
 
     def set_start(self, tile):
         if self.start_tile:
