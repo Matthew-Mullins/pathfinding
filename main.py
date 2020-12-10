@@ -41,6 +41,7 @@ class Tile:
         self.frame = frame
         self.position = position
         self.blocked = False
+        self.color = 'white'
 
     def reset(self):
         self.set_block(False)
@@ -132,14 +133,14 @@ class Application(tk.Frame):
         ]
         self.algorithm_var = tk.StringVar()
         self.algorithm_var.set(self.algorithms[0])
-        combobox = ttk.Combobox(frame_header, justify=tk.LEFT, textvariable=self.algorithm_var, values=self.algorithms, width=20)
+        combobox = ttk.Combobox(frame_header, state='readonly', justify=tk.LEFT, textvariable=self.algorithm_var, values=self.algorithms, width=20)
         combobox.grid(row=1, column=3, sticky=tk.W)
 
         label = tk.Label(frame_header, anchor=tk.W, text='Pathfinding Delay (ms):')
         label.grid(row=2, column=2, sticky=tk.W)
 
         self.delay_var = tk.StringVar()
-        self.delay_var.set(1000)
+        self.delay_var.set(100)
         entry_delay = tk.Entry(frame_header, justify=tk.RIGHT, textvariable=self.delay_var, width=5)
         entry_delay.grid(row=2, column=3, sticky=tk.W)
 
@@ -195,17 +196,19 @@ class Application(tk.Frame):
         tile.set_end()
 
     def start(self):
+        self.running = True
         algo_selected = self.algorithm_var.get()
         algo = None
         if algo_selected == self.algorithms[0]:
-            algo = AStar(self.master, self.grid)
+            algo = AStar(self, self.grid)
         elif algo_selected == self.algorithms[1]:
-            algo = Dijkstra(self.master, self.grid)
+            algo = Dijkstra(self, self.grid)
         elif algo_selected == self.algorithms[2]:
-            algo = DFS(self.master, self.grid)
+            algo = DFS(self, self.grid)
         else:
-            algo = BFS(self.master, self.grid)
+            algo = BFS(self, self.grid)
         algo.run(self.start_tile.position, self.end_tile.position)
+        self.running = False
 
     def update(self):
         self.master.update()
@@ -213,14 +216,13 @@ class Application(tk.Frame):
 
     def run(self):
         while True:
-            if self.running:
-                pass
             self.update()
 
 def main():
     root = tk.Tk()
     root.title('Pathfinding Visualizer')
     root.resizable(width=tk.FALSE, height=tk.FALSE)
+    root.bind_all('<1>', lambda event:event.widget.focus_set())
     root.withdraw()
     app = Application(root)
     root.deiconify()
