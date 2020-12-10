@@ -13,7 +13,7 @@ class AStar(Algorithm):
         return lowest
 
     def get_neighbours(self, current):
-        neighbours = []
+        neighbours = set()
         for y in range(current[1] - 1, current[1] + 2):
             if not 0 <= y < len(self.grid):
                 continue
@@ -24,7 +24,7 @@ class AStar(Algorithm):
                     continue
                 tile = self.grid[y][x]
                 if not tile.blocked:
-                    neighbours.append((x, y))
+                    neighbours.add((x, y))
         return neighbours
 
     def d(self, current, neighbour):
